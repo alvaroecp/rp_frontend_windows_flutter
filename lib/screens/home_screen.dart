@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import 'farmer_status_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Token caducado o inválido (401)
         _handleLogoutLocally();
         setState(() {
-          _errorMessage = 'La sesión ha caducado. Por favor, inicia sesión nuevamente.';
+          _errorMessage = 'Your session has expired. Please sign in again.';
         });
       } else {
         final expira = perfil['session_expires_at'];
@@ -94,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (expira != null && !DateTime.now().isBefore(expira)) {
         _handleLogoutLocally();
         setState(() {
-          _errorMessage = 'La sesión ha caducado. Por favor, inicia sesión nuevamente.';
+          _errorMessage = 'Your session has expired. Please sign in again.';
         });
         return;
       }
@@ -163,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
                     Text(
-                      'Esperando la autenticación en el navegador ....',
+                      'Waiting for authentication in the browser...',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey),
                     ),
@@ -171,12 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               else if (_appToken == null)
                 // Vista: No autenticado
-                FilledButton.icon(
-                  onPressed: _handleLogin,
-                  icon: const Icon(Icons.login),
-                  label: const Text('Iniciar sesión con eSignet'),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                Center(
+                  child: FilledButton.icon(
+                    onPressed: _handleLogin,
+                    icon: const Icon(Icons.login),
+                    label: const Text('Sign in with eSignet'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                    ),
                   ),
                 )
               else
@@ -192,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          '¡Hola!',
+                          'Hello!',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -212,25 +215,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          Text('Nombre: ${_perfilData!['profile']['name'] ?? 'N/D'}'),
+                          Text('Name: ${_perfilData!['profile']['name'] ?? 'N/A'}'),
                           const SizedBox(height: 8),
-                          Text('Correo: ${_perfilData!['profile']['email'] ?? 'N/D'}'),
+                          Text('Email: ${_perfilData!['profile']['email'] ?? 'N/A'}'),
                           if (_sesionExpira != null) ...[
                             const SizedBox(height: 8),
-                            Text('Sesión válida hasta: ${_formatoHora(_sesionExpira!)}'),
+                            Text('Session valid until: ${_formatoHora(_sesionExpira!)}'),
                             const SizedBox(height: 8),
-                            Text('Tiempo restante: ${_formatoRestante(_sesionExpira!.difference(DateTime.now()))}'),
+                            Text('Time remaining: ${_formatoRestante(_sesionExpira!.difference(DateTime.now()))}'),
                           ],
                         ] else
-                          const Text('Cargando perfil...'),
+                          const Text('Loading profile...'),
                         const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: () {
+                              final nombre =
+                                  _perfilData?['profile']?['name']?.toString() ?? 'N/A';
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => FarmerStatusScreen(name: nombre),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.agriculture),
+                            label: const Text('Farmer Status'),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: _handleLogout,
                                 icon: const Icon(Icons.logout),
-                                label: const Text('Cerrar Sesión'),
+                                label: const Text('Sign out'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red.shade50,
                                   foregroundColor: Colors.red,
