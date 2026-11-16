@@ -16,12 +16,13 @@ Features:
 
 - Signs in with eSignet through the BACKEND. The APP does not talk to eSignet directly and does not receive its tokens: it only holds the BACKEND's `app_token`, in memory.
 - Shows the profile: photo, name and email.
+- Shows a Farmer Status screen (`lib/screens/farmer_status_screen.dart`), opened from the profile. It is a mock to simulate an eligibility check: it shows the name of the user and made-up data, such as "Eligible for input subsidy: Yes". It does not call the BACKEND.
 - Shows when the session expires, with a live countdown that compares the BACKEND's expiry time with the computer's clock. When it reaches zero, the APP signs out locally.
 - Signs out: ends the session in the BACKEND and clears the APP's local state.
 
-Built with Flutter (Windows desktop, Dart `^3.13.7`), `http` for the requests and `url_launcher` to open the BROWSER.
+Built with Flutter (Windows desktop, Dart `^3.14.0`), `material_ui` for the Material widgets, `http` for the requests and `url_launcher` to open the BROWSER.
 
-**Status.** Learning project. In the tests it worked end to end with the BACKEND on Windows. Known limitations: the BACKEND's URL is fixed in the code, there is no cancel button while the APP waits for the USER (it waits until the ticket expires, 300 s), the texts on the screen are in Spanish, and it has no automated tests of its own.
+**Status.** Learning project. In the tests it worked end to end with the BACKEND on Windows. Known limitations: the BACKEND's URL is fixed in the code, there is no cancel button while the APP waits for the USER (it waits until the ticket expires, 300 s), some error messages are still in Spanish, and it has no automated tests of its own.
 
 ## Integration with the BACKEND
 
@@ -51,7 +52,7 @@ When something goes wrong:
 
 Requirements:
 
-- [Flutter](https://docs.flutter.dev/get-started/install/windows/desktop) (stable channel, Dart `^3.13.7`) with Windows desktop support. `flutter doctor` shows whether the Windows toolchain is ready.
+- [Flutter](https://docs.flutter.dev/get-started/install/windows/desktop) (stable channel, Dart `^3.14.0`) with Windows desktop support. It was tested with Flutter 3.50.0 (Dart 3.14.0). `flutter doctor` shows whether the Windows toolchain is ready.
 - The BACKEND and eSignet running. See the BACKEND's README, which also says how to create the keys and register the client. In the tests, the BACKEND ran in WSL and the APP reached it through `localhost`.
 
 The `windows/` folder (the native Windows project) is not in this repository, because Flutter generates it. After cloning, create it once:
@@ -67,6 +68,6 @@ flutter pub get
 flutter run -d windows
 ```
 
-Press the sign-in button: the BROWSER opens, the USER authenticates with eSignet, and the APP shows the profile.
+Press “Sign in with eSignet”: the BROWSER opens, the USER authenticates with eSignet, and the APP shows the profile.
 
 If the BACKEND is not at `http://localhost:3005`, change `backendUrl` in `lib/services/auth_service.dart`.
