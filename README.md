@@ -2,7 +2,7 @@
 
 ## Overview
 
-Flutter desktop application for Windows (hereafter the **APP**) that signs in with eSignet 2.0.0 (OpenID Connect) through an RP backend.
+Flutter desktop application for Windows (hereafter the **APP**) that signs in with eSignet 2.0.0 (OpenID Connect) through an RP backend. A web version of this APP is in [rp_frontend_web_flutter](https://github.com/alvaroecp/rp_frontend_web_flutter).
 
 Actors:
 
@@ -17,7 +17,7 @@ Features:
 - Signs in with eSignet through the BACKEND. The APP does not talk to eSignet directly and does not receive its tokens: it only holds the BACKEND's `app_token`, in memory.
 - Shows the profile: photo, name and email.
 - Shows a Farmer Status screen (`lib/screens/farmer_status_screen.dart`), opened from the profile. It is a mock to simulate an eligibility check: it shows the name of the user and made-up data, such as "Eligible for input subsidy: Yes". It does not call the BACKEND.
-- Shows when the session expires, with a live countdown that compares the BACKEND's expiry time with the computer's clock. When it reaches zero, the APP signs out locally.
+- Shows when the session expires, with a live countdown that compares the BACKEND's expiry time with the computer's clock. When it reaches zero, the APP clears its local state, because the session has already expired in the BACKEND.
 - Signs out: ends the session in the BACKEND and clears the APP's local state.
 
 Built with Flutter (Windows desktop, Dart `^3.14.0`), `material_ui` for the Material widgets, `http` for the requests and `url_launcher` to open the BROWSER.
@@ -46,7 +46,7 @@ When something goes wrong:
 | `status` does not return `200` (`403`, `404`, `410`…) | Stops polling and shows an error |
 | `status` returns `error` | Stops polling and shows an error: the sign-in failed at the provider |
 | No `complete` after `expires_in` seconds | Stops polling and shows a timeout error |
-| `me` returns `401`, or the countdown reaches zero | Signs out locally and asks the USER to sign in again |
+| `me` returns `401`, or the countdown reaches zero | Clears its local state and asks the USER to sign in again |
 
 ## Running
 
